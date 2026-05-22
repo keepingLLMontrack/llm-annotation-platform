@@ -1,0 +1,5 @@
+streamlit>=1.37
+pandas>=2.2
+datasets>=2.21
+huggingface_hub>=0.24
+scikit-learn>=1.5
