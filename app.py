@@ -543,11 +543,33 @@ def main() -> None:
             item = current_item_row()
             if item is None:
                 st.info("Claim an item to start. The app keeps a per-annotator queue so multiple people can work in parallel.")
+            
                 q = queue_df().head(10)
+            
+                # DEBUG: inspect actual dataset schema
+                st.write("Dataset columns:", list(q.columns))
+            
                 if not q.empty:
-                    display = q[["item_id", "sample_id", "domain", "scenario", "distractor_index"]].copy()
-                    display["preview"] = q["distractor_text"].map(preview_text)
+            
+                    # Only use columns that actually exist
+                    available_cols = [
+                        c for c in [
+                            "item_id",
+                            "sample_id",
+                            "domain",
+                            "scenario",
+                            "distractor_index"
+                        ]
+                        if c in q.columns
+                    ]
+            
+                    display = q[available_cols].copy()
+            
+                    if "distractor_text" in q.columns:
+                        display["preview"] = q["distractor_text"].map(preview_text)
+            
                     st.dataframe(display, use_container_width=True, hide_index=True)
+            
                 return
 
             st.markdown(
