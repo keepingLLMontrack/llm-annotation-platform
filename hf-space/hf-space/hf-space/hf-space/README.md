@@ -1,93 +1,72 @@
----
-title: LLM Annotation Platform
-emoji: 🧠
-colorFrom: blue
-colorTo: purple
-sdk: docker
-pinned: false
----
+# LLM Annotation Platform
 
-# LLM Annotation Platform — Hugging Face native
+A simple Streamlit app for collaborative editing of a human-made distractor dataset.
 
-This version removes the external database layer.
+## What it supports
 
-## What it uses
+- browse source data from a Hugging Face dataset repo or a local JSON/JSONL file
+- load a row by index into an editor
+- create a new blank entry
+- edit:
+  - `domain`
+  - `scenario`
+  - `system_instruction`
+  - `conversation`
+  - `distractors`
+  - `distractors_multiturn`
+  - `conversation_with_distractors`
+- mark the entry with a `split` value (`train` / `test`)
+- save drafts in the HF Space bucket path (`/data/drafts`)
+- submit each finished entry as a separate JSON file to a Hugging Face dataset repo
+- optionally ask a local OpenAI-compatible LLM server such as LM Studio to draft one distractor at a time
 
-- **Hugging Face Space** for the Streamlit app
-- **Hugging Face dataset repo** for the canonical annotation store
-- **Hugging Face Storage Bucket** only for persistent local cache / drafts in the Space
-- **No Supabase**
-- **No separate backend platform**
+## Output shape
 
-Hugging Face Spaces provide ephemeral disk by default, and Hugging Face recommends attaching Storage Buckets to persist data across restarts. Buckets are mounted into the Space container as local volumes. citeturn322583view0
+The app keeps the source structure and adds provenance fields:
 
-## Repository structure
+- `split`
+- `_review_status`
+- `_needs_human_review`
+- `_annotator`
+- `_source_repo`
+- `_source_split`
+- `_source_index`
+- `_created_at`
+- `_updated_at`
 
-```text
-app.py
-scripts/seed.py
-requirements.txt
-README.md
-```
+That means the final file can still be merged into one dataset later.
 
-## Behavior
-
-Each annotation is written as its own JSON file into the dataset repository:
-```text
-annotations/<annotator>/<timestamp>_<item_id>_<uuid>.json
-```
-
-That design avoids write conflicts between annotators because each submission is a new file, not an overwrite of a shared database row. Repository files on the Hub are versioned, and the Hub supports uploading files to dataset repositories. citeturn322583view1turn322583view4
-
-## Local run
+## Run locally
 
 ```bash
 pip install -r requirements.txt
 streamlit run app.py
 ```
 
-## How to set it up on Hugging Face
+## Environment variables
 
-### 1. Create two dataset repositories
+Set these in your GitHub repo / HF Space:
 
-Create:
-- one dataset repo for the **source / seed data**
-- one dataset repo for the **annotations**
-
-Hugging Face dataset repositories are created from the Hub UI, and dataset files plus revision history are stored in the repository. citeturn322583view1
-
-### 2. Create a Space
-
-Create a **Streamlit** Space and connect it to your GitHub repository. Spaces host apps directly on the Hub and support Streamlit as a built-in SDK. citeturn322583view2
-
-### 3. Attach a Storage Bucket
-
-Attach a Storage Bucket to the Space and mount it at `/data`.
-
-This is the only stateful storage used by the app. It stores drafts and cache files and survives restarts. Hugging Face documents Storage Buckets as the recommended persistence mechanism for Spaces. citeturn322583view0
-
-### 4. Add secrets
-
-In the Space settings, add:
-- `HF_TOKEN` — a Hugging Face token with **write** permission
 - `SOURCE_DATASET_REPO`
-- `SOURCE_DATASET_SPLIT`
+- `SOURCE_DATASET_SPLITS`  
+  Example: `train,test`
 - `ANNOTATION_REPO_ID`
+- `HF_TOKEN`
 
-Hugging Face recommends using Space secrets or environment variables instead of hard-coding sensitive values. A write token is required to create repositories or push content to the Hub. citeturn322583view2turn322583view4
+Optional local LLM settings:
+- `LLM_BASE_URL` is entered in the sidebar inside the app
+- `LLM_MODEL` is entered in the sidebar inside the app
 
-### 5. Deploy
+## HF Space setup
 
-Commit the repo to GitHub. Once the Space is linked, it will build from the repository, and the app can upload annotation files to the dataset repo using the Hub API. Hugging Face’s Hub client supports `upload_file()` and `create_commit()` for repository writes. citeturn322583view3turn322583view4
+Use a Docker Space, mount persistent storage at `/data`, and set the environment variables above. The app stores drafts and submission logs in the bucket path.
 
-## Suggested workflow for your group
+## GitHub structure
 
-- each person uses a stable annotator name
-- each submission creates a new JSON file in the annotation repo
-- the Review page shows items with 2+ annotations
-- the Dashboard shows per-annotator and per-domain progress
-- exports are generated from the merged source + annotation view
-
-## Why this is a good fit
-
-The original source dataset can still be loaded with `datasets.load_dataset(...)`, and the Hugging Face ecosystem is designed for pushing and versioning datasets directly on the Hub. The `datasets` library also provides a `push_to_hub()` path for dataset publishing, while `huggingface_hub` provides lower-level file upload methods when you want more control over file layout. citeturn674332search1turn674332search3turn322583view3
+```text
+app.py
+requirements.txt
+README.md
+Dockerfile
+.streamlit/config.toml
+```
