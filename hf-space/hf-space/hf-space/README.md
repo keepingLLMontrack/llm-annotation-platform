@@ -1,3 +1,12 @@
+---
+title: LLM Annotation Platform
+emoji: 🧠
+colorFrom: blue
+colorTo: purple
+sdk: docker
+pinned: false
+---
+
 # LLM Annotation Platform — Hugging Face native
 
 This version removes the external database layer.
