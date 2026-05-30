@@ -2,6 +2,7 @@ __pycache__/
 *.pyc
 .streamlit/
 data/
+drafts/
 exports/
 .env
 .DS_Store
