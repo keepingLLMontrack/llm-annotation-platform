@@ -13,7 +13,7 @@ TACTICS = [
 ]
 
 # Allowed review statuses
-REVIEW_STATUSES = ["draft", "approved", "failed", "needs_revision", "in progress"]
+REVIEW_STATUSES = ["draft", "approved", "failed", "needs_revision"]
 
 # Conversation turn roles
 ROLES = ["user", "assistant"]
@@ -21,13 +21,14 @@ ROLES = ["user", "assistant"]
 # HuggingFace dataset IDs
 BASE_DATASET_ID = "nvidia/CantTalkAboutThis-Topic-Control-Dataset"
 
-# LLM models available in LM Studio (OpenAI-compatible local API)
-DEFAULT_CHAT_MODEL = "google_gemma-4-e2b-it"
+# LLM models available via HF Inference API
+DEFAULT_CHAT_MODEL = "google/gemma-2-2b-it"
 AVAILABLE_CHAT_MODELS = [
-    "google_gemma-4-e2b-it",
-    "gemma-4-e2b-it",
-    "meta-llama-3.2-3b-instruct",
-    "mistral-7b-instruct-v0.2",
+    "google/gemma-2-2b-it",
+    "google/gemma-2-9b-it",
+    "meta-llama/Llama-3.2-3B-Instruct",
+    "HuggingFaceH4/zephyr-7b-beta",
+    "mistralai/Mistral-7B-Instruct-v0.2",
 ]
 
 # LLM test result labels
@@ -40,13 +41,10 @@ LLM_RESULT_LABELS = [
 
 # Known domains in the dataset
 KNOWN_DOMAINS = [
-    "health",
-    "legal",
     "banking",
-    "insurance",
-    "real estate",
-    "travel",
-    "education",
-    "taxes",
-    "computer_troubleshooting"
+    "legal",
+    "computer_troubleshooting",
+    "medical",
+    "financial",
+    "other",
 ]

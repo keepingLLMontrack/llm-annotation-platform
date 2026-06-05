@@ -6,8 +6,6 @@ Call render_sidebar() at the top of every page.
 import os
 import streamlit as st
 
-from dataset_io import get_annotations_repo, get_hf_token
-
 
 def render_sidebar(page_title: str = "") -> str:
     """
@@ -16,7 +14,7 @@ def render_sidebar(page_title: str = "") -> str:
     """
     with st.sidebar:
         st.markdown("## 🎯 Annotation Tool")
-        st.caption("NLP with DL — Research")
+        st.caption("NLP with DL — MSc Research")
         st.divider()
 
         # ── Annotator identity ──────────────────────────────────────────────
@@ -43,8 +41,14 @@ def render_sidebar(page_title: str = "") -> str:
         st.divider()
 
         # ── Config status ───────────────────────────────────────────────────
-        token_ok = bool(get_hf_token())
-        repo_ok = bool(get_annotations_repo())
+        token_ok = bool(
+            os.environ.get("HF_TOKEN")
+            or (st.secrets.get("HF_TOKEN") if hasattr(st, "secrets") else None)
+        )
+        repo_ok = bool(
+            os.environ.get("ANNOTATIONS_REPO_ID")
+            or (st.secrets.get("ANNOTATIONS_REPO_ID") if hasattr(st, "secrets") else None)
+        )
 
         if token_ok and repo_ok:
             st.caption("🔗 Connected to shared repo")

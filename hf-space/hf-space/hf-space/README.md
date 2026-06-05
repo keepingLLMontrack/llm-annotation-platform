@@ -1,72 +1,59 @@
-# LLM Annotation Platform
+---
+title: Distractor Annotation Tool
+emoji: 🎯
+colorFrom: purple
+colorTo: indigo
+sdk: streamlit
+sdk_version: 1.36.0
+app_file: app.py
+pinned: false
+---
 
-A simple Streamlit app for collaborative editing of a human-made distractor dataset.
+# 🎯 Distractor Annotation Tool
 
-## What it supports
+Collaborative annotation GUI for the MSc NLP research project **"Keeping LLMs on Track in Task-Oriented Dialogue"**.
 
-- browse source data from a Hugging Face dataset repo or a local JSON/JSONL file
-- load a row by index into an editor
-- create a new blank entry
-- edit:
-  - `domain`
-  - `scenario`
-  - `system_instruction`
-  - `conversation`
-  - `distractors`
-  - `distractors_multiturn`
-  - `conversation_with_distractors`
-- mark the entry with a `split` value (`train` / `test`)
-- save drafts in the HF Space bucket path (`/data/drafts`)
-- submit each finished entry as a separate JSON file to a Hugging Face dataset repo
-- optionally ask a local OpenAI-compatible LLM server such as LM Studio to draft one distractor at a time
+## One-time Setup
 
-## Output shape
+### 1. Create a private HF Dataset repo for shared annotations
+Go to [huggingface.co/new-dataset](https://huggingface.co/new-dataset), make it **private**, and note the repo ID (e.g. `yourgroup/distractor-annotations`).
 
-The app keeps the source structure and adds provenance fields:
+### 2. Set secrets in your HF Space
+In your Space → Settings → Repository secrets, add:
+| Secret | Value |
+|---|---|
+| `HF_TOKEN` | Your HF token with **write** access |
+| `ANNOTATIONS_REPO_ID` | e.g. `yourgroup/distractor-annotations` |
 
-- `split`
-- `_review_status`
-- `_needs_human_review`
-- `_annotator`
-- `_source_repo`
-- `_source_split`
-- `_source_index`
-- `_created_at`
-- `_updated_at`
+### 3. Set secrets in your GitHub repo
+In GitHub → Settings → Secrets and variables → Actions, add the same `HF_TOKEN`.
 
-That means the final file can still be merged into one dataset later.
+### 4. Update the sync workflow
+In `.github/workflows/sync_to_hf.yml`, replace `YOUR_HF_USERNAME` and `YOUR_SPACE_NAME` with your actual values.
 
-## Run locally
+### 5. Import seed data
+On first run, go to the **Dashboard** and click **Import Seed Data** to populate the shared repo with the group's initial entries.
 
-```bash
-pip install -r requirements.txt
-streamlit run app.py
-```
+## Workflow
 
-## Environment variables
+| Page | Purpose |
+|---|---|
+| 🏠 Dashboard | Stats overview, seed import, config check |
+| 📚 Browse | Explore the base nvidia dataset and seed entries |
+| ✏️ Annotate | Create multi-turn distractor entries |
+| 👥 Annotations | View, edit, review all group work |
+| 💬 Test LLM | Send distractors to a live LLM, judge if it gets distracted |
 
-Set these in your GitHub repo / HF Space:
+## Annotation Schema
 
-- `SOURCE_DATASET_REPO`
-- `SOURCE_DATASET_SPLITS`  
-  Example: `train,test`
-- `ANNOTATION_REPO_ID`
-- `HF_TOKEN`
+Each annotation follows the `nvidia/CantTalkAboutThis` schema, extended with:
+- `distractors_multiturn`: rich multi-turn distractor sequences
+- `_id`, `_annotator`, `_review_status`, `_created_at`, `_updated_at`
+- `_llm_test_results`: logged results from the Test LLM page
 
-Optional local LLM settings:
-- `LLM_BASE_URL` is entered in the sidebar inside the app
-- `LLM_MODEL` is entered in the sidebar inside the app
+## Base Dataset
+[nvidia/CantTalkAboutThis-Topic-Control-Dataset](https://huggingface.co/datasets/nvidia/CantTalkAboutThis-Topic-Control-Dataset)
 
-## HF Space setup
-
-Use a Docker Space, mount persistent storage at `/data`, and set the environment variables above. The app stores drafts and submission logs in the bucket path.
-
-## GitHub structure
-
-```text
-app.py
-requirements.txt
-README.md
-Dockerfile
-.streamlit/config.toml
-```
+## Related Papers
+- [2024.findings-emnlp.713](https://aclanthology.org/2024.findings-emnlp.713)
+- [arXiv:2511.05018](https://arxiv.org/abs/2511.05018)

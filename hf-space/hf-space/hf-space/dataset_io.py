@@ -46,43 +46,6 @@ def get_annotations_repo() -> Optional[str]:
         return None
 
 
-def get_lmstudio_base_url() -> str:
-    """Return LM Studio base URL for OpenAI-compatible local API."""
-    return (
-        os.environ.get("OPENAI_BASE_URL")
-        or os.environ.get("LMSTUDIO_BASE_URL")
-        or "http://localhost:1234/v1"
-    )
-
-
-def get_lmstudio_api_key() -> str:
-    """Return API key used by LM Studio's OpenAI-compatible API."""
-    return (
-        os.environ.get("OPENAI_API_KEY")
-        or os.environ.get("LMSTUDIO_API_KEY")
-        or "lm-studio"
-    )
-
-
-def get_lmstudio_default_model() -> Optional[str]:
-    """Return default local model name configured for LM Studio."""
-    return os.environ.get("LLM_MODEL") or None
-
-
-def get_seed_data_path() -> Optional[Path]:
-    """Return the first existing bundled seed data path, if any."""
-    project_root = Path(__file__).resolve().parent
-    candidates = [
-        project_root / "seed_data" / "draft_distractors.json",
-        project_root / "data" / "draft_distractors.json",
-        project_root.parent / "seed_data" / "draft_distractors.json",
-    ]
-    for candidate in candidates:
-        if candidate.exists():
-            return candidate
-    return None
-
-
 # ---------------------------------------------------------------------------
 # Base dataset (public, cached)
 # ---------------------------------------------------------------------------
@@ -124,8 +87,8 @@ def load_base_dataset() -> list[dict]:
 
 def load_seed_data() -> list[dict]:
     """Load the group's initial draft entries from seed_data/."""
-    seed_path = get_seed_data_path()
-    if seed_path is not None:
+    seed_path = Path(__file__).parent.parent / "seed_data" / "draft_distractors.json"
+    if seed_path.exists():
         with open(seed_path, encoding="utf-8") as f:
             data = json.load(f)
         for entry in data:
@@ -218,41 +181,6 @@ def save_annotations(annotations: list[dict]) -> bool:
         return True
     except Exception as e:
         st.error(f"Failed to save annotations: {e}")
-        return False
-
-
-def save_export_file(filename: str, entries: list[dict]) -> bool:
-    """
-    Upload a custom JSON export file to the private HF dataset repo.
-    Returns True on success, False on failure.
-    """
-    repo_id = get_annotations_repo()
-    token = get_hf_token()
-
-    if not repo_id:
-        st.error("ANNOTATIONS_REPO_ID is not set. Set it in your Space secrets.")
-        return False
-    if not token:
-        st.error("HF_TOKEN is not set. Set it in your Space secrets.")
-        return False
-
-    try:
-        from huggingface_hub import HfApi  # noqa: PLC0415
-
-        _ensure_repo_exists(repo_id, token)
-        api = HfApi()
-        content = json.dumps(entries, indent=2, ensure_ascii=False)
-        api.upload_file(
-            path_or_fileobj=content.encode("utf-8"),
-            path_in_repo=filename,
-            repo_id=repo_id,
-            repo_type="dataset",
-            token=token,
-            commit_message=f"Add export {filename}",
-        )
-        return True
-    except Exception as e:
-        st.error(f"Failed to upload export file '{filename}': {e}")
         return False
 
 
