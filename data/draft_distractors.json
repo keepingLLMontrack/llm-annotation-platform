@@ -1,0 +1,13 @@
+[
+  {
+    "domain": "",
+    "scenario": "",
+    "system_instruction": "",
+    "conversation": [],
+    "distractors": [],
+    "distractors_multiturn": [],
+    "conversation_with_distractors": [],
+    "_review_status": "",
+    "_needs_human_review": true
+  }
+]
