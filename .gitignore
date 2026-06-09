@@ -1,8 +1,12 @@
 __pycache__/
 *.pyc
 .streamlit/
+.venv/
+st.log
 data/
 drafts/
 exports/
 .env
 .DS_Store
+_local_mock_llm.py
+.streamlit/

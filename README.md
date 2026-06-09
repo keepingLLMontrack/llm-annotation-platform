@@ -11,72 +11,98 @@ pinned: false
 
 # 🎯 Distractor Annotation Tool
 
-Collaborative annotation GUI for the MSc NLP research project **"Keeping LLMs on Track in Task-Oriented Dialogue"**.
+Annotation platform for the MSc NLP project **"Keeping LLMs on Track in
+Task-Oriented Dialogue."** It implements the required workflow end-to-end:
 
-### 1. Create a private HF Dataset repo for shared annotations
-Go to [huggingface.co/new-dataset](https://huggingface.co/new-dataset), make it **private**, and note the repo ID (e.g. `yourgroup/distractor-annotations`).
+1. **Browse & Select** — pick a real conversation from
+   [`nvidia/CantTalkAboutThis-Topic-Control-Dataset`](https://huggingface.co/datasets/nvidia/CantTalkAboutThis-Topic-Control-Dataset)
+   and choose the user turn where a distractor is injected.
+2. **Annotate** — define the distractor goal, write a **shared first distractor
+   turn**, then run it against **Llama 3.1 8B Instruct** and **gpt-oss-20b**
+   interactively (run → read response → write the next turn, up to 3 turns).
+   Label every response and assign an overall outcome per model.
+3. **Review & Export** — export one row per (scenario, model) in the exact
+   required column schema (CSV/JSON).
 
-### 2. Set secrets in your HF Space
-In your Space → Settings → Repository secrets, add:
-| Secret | Value |
-|---|---|
-| `HF_TOKEN` | Your HF token with **write** access |
-| `ANNOTATIONS_REPO_ID` | e.g. `yourgroup/distractor-annotations` |
+The system prompt (domain policy) is always passed as a real **system message**.
+Only the final, user-facing response is annotated — hidden reasoning is shown
+greyed-out and never labelled.
 
-### 3. Set up LM Studio (local LLM server)
-1. Install LM Studio.
-2. Download and load a chat model.
-3. Start the local server in LM Studio (OpenAI-compatible API).
-4. Confirm the server endpoint is available (default: `http://localhost:1234/v1`).
-5. Note the loaded model name exactly as shown in LM Studio.
+## Target: 18 scenarios (~2 per domain × 9 domains), optionally 27.
 
-### 4. Create local Streamlit secrets (`.streamlit/secrets.toml`)
-Create a file at `.streamlit/secrets.toml` with:
+---
+
+## Setup
+
+### 1. Create a private HF dataset repo for shared annotations
+Go to [huggingface.co/new-dataset](https://huggingface.co/new-dataset), make it
+**private**, and note the repo ID (e.g. `yourgroup/distractor-annotations`).
+
+### 2. Configure secrets
+Locally, create `.streamlit/secrets.toml` (or use environment variables — see
+`.env.example`):
 
 ```toml
-# Hugging Face dataset sync
 HF_TOKEN = "hf_xxx"
 ANNOTATIONS_REPO_ID = "yourgroup/distractor-annotations"
 
-# LM Studio (local OpenAI-compatible server)
+# Model serving (OpenAI-compatible endpoint, e.g. LM Studio)
 OPENAI_BASE_URL = "http://localhost:1234/v1"
-OPENAI_API_KEY = "lm-studio"
-LLM_MODEL = "google_gemma-4-e2b-it"
+OPENAI_API_KEY  = "lm-studio"
+
+# Optional per-model overrides (e.g. gpt-oss on a hosted endpoint)
+# LLAMA_MODEL   = "meta-llama-3.1-8b-instruct"
+# GPTOSS_BASE_URL = "https://your-endpoint/v1"
+# GPTOSS_API_KEY  = "..."
+# GPTOSS_MODEL    = "openai/gpt-oss-20b"
 ```
 
-Notes:
-- `OPENAI_API_KEY` can be any non-empty value for LM Studio local usage.
-- `LLM_MODEL` must match the model id loaded in LM Studio.
+In an HF Space, add `HF_TOKEN` and `ANNOTATIONS_REPO_ID` under
+**Settings → Repository secrets**.
 
-### 5. Set secrets in your GitHub repo
-In GitHub → Settings → Secrets and variables → Actions, add the same `HF_TOKEN`.
+### 3. Serve the two models
+Both are called through one OpenAI-compatible API. With **LM Studio**: load the
+model(s), Start Server, and set the served-model ids via `LLAMA_MODEL` /
+`GPTOSS_MODEL` to match what LM Studio shows. `gpt-oss-20b` is large — if it is
+infeasible locally, point `GPTOSS_BASE_URL` / `GPTOSS_API_KEY` at a hosted
+endpoint, or document the limitation.
 
-### 6. Update the sync workflow
-In `.github/workflows/sync_to_hf.yml`, replace `YOUR_HF_USERNAME` and `YOUR_SPACE_NAME` with your actual values.
+### 4. Decoding
+Fixed defaults: `temperature = 0.2`, `top_p = 1.0` (adjustable per scenario).
+Both values are recorded in every export row.
 
-### 7. Run Locally
+---
 
-Run the following in a PowerShell terminal from the project root:
+## Run locally (Windows PowerShell)
 
 ```powershell
-$env:OPENAI_BASE_URL = "http://localhost:1234/v1"
-$env:LLM_MODEL = "google_gemma-4-e2b-it"
-$env:OPENAI_API_KEY = "lm-studio"
+cd C:\Users\elipe\Desktop\NLP\llm-annotation-platform
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+py -m pip install -r requirements.txt
 py -m streamlit run app.py
 ```
 
-This starts the Streamlit app and opens it in your default browser.
+Enter your name in the sidebar, then work through the pages **1 → 2 → 3**.
 
-### 8. Enter name into field on the left hand side
+---
 
-### 9. Check configuration settings
+## Export schema (one row per scenario+model)
 
-### 10. You're good to go
+```
+annotator_name, second_annotator_name_if_any, scenario_id, domain,
+conversation_id, selected_turn_id, system_prompt_or_policy_summary,
+original_user_message, distractor_goal, targeted_rule_or_scope_boundary,
+why_this_is_a_good_distractor, model_name, temperature, top_p,
+distractor_turn_1, model_response_1, response_label_1,
+distractor_turn_2, model_response_2, response_label_2,
+distractor_turn_3_if_any, model_response_3_if_any, response_label_3_if_any,
+overall_outcome, short_justification, disagreement_notes_if_any, notes
+```
 
+The Llama row and the gpt-oss row for the same original scenario share the same
+`scenario_id`.
 
-## Base Dataset
-[nvidia/CantTalkAboutThis-Topic-Control-Dataset](https://huggingface.co/datasets/nvidia/CantTalkAboutThis-Topic-Control-Dataset)
-
-## Related Papers
-- [2024.findings-emnlp.713](https://aclanthology.org/2024.findings-emnlp.713)
+## Related
+- Paper: [2024.findings-emnlp.713](https://aclanthology.org/2024.findings-emnlp.713)
 - [arXiv:2511.05018](https://arxiv.org/abs/2511.05018)

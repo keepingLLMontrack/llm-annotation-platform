@@ -1,5 +1,0 @@
-streamlit>=1.38
-pandas>=2.2
-datasets>=2.21
-huggingface_hub>=0.24
-openai>=1.40

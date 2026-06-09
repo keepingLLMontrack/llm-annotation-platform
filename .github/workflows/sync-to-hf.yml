@@ -24,7 +24,10 @@ jobs:
 
           git clone https://user:$HF_TOKEN@huggingface.co/spaces/keepingLLMontrack/llm-annotation-platform hf-space
 
-          rsync -av --exclude '.git' ./ hf-space/
+          # --exclude 'hf-space' prevents copying the clone into itself (which
+          # previously caused unbounded hf-space/hf-space/... nesting).
+          # --delete keeps the Space a true mirror so removed files don't linger.
+          rsync -av --delete --exclude '.git' --exclude 'hf-space' --exclude '.venv' ./ hf-space/
 
           cd hf-space
 
