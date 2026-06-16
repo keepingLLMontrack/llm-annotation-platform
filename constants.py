@@ -22,7 +22,7 @@ KNOWN_DOMAINS = [
     "real estate",
     "taxes",
     "travel",
-    "computer_troubleshooting",
+    "computer troubleshooting",
 ]
 
 # Target number of scenarios: ~2 per domain across 9 domains = 18 (27 optional).
