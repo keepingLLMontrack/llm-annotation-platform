@@ -67,7 +67,7 @@ def run_chat(
     model_cfg: dict,
     temperature: float = DEFAULT_TEMPERATURE,
     top_p: float = DEFAULT_TOP_P,
-    max_tokens: int = 768,
+    max_tokens: int = 4096,
 ) -> dict:
     """
     Call one model with a fully-assembled message list (system message already

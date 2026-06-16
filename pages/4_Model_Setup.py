@@ -88,7 +88,7 @@ for model_display in TARGET_MODELS:
                     result = run_chat(
                         [{"role": "user", "content": "Reply with the single word: ok"}],
                         resolve_model(model_display),
-                        max_tokens=8,
+                        max_tokens=256,  # room for reasoning models (gpt-oss) to reach the final answer
                     )
                 if result["ok"]:
                     st.success(f"✅ Reachable. Reply: {result['final'][:120]}")
