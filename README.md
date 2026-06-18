@@ -32,7 +32,7 @@ The target was to have at least 2 high-quality annotated distractors per domain.
 
 ---
 
-## Running the application
+## Running the application locally
 
 ### 1. Prerequisites
 - **Python 3.11+**, **git**, and an **OpenAI-compatible model endpoint** (see step 4).
@@ -78,6 +78,9 @@ Open `http://localhost:8501`, enter your name in the sidebar, and work through
 the pages **1 → 2 → 3** (configure models on page **4**).
 
 ---
+
+## Running the application on Huggingface
+Running the app through the huggingface interface is very straightforward and identical to the local run. Nonetheless, it is imporant to know that running it through huggingface does not support local LLM usages and thus requires you to use something like Groq to run the LLMs.
 
 ## Annotation style
 
