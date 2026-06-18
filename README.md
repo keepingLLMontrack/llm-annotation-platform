@@ -80,7 +80,7 @@ the pages **1 → 2 → 3** (configure models on page **4**).
 ---
 
 ## Running the application on Huggingface
-Running the app through the huggingface interface is very straightforward and identical to the local run. Nonetheless, it is imporant to know that running it through huggingface does not support local LLM usages and thus requires you to use something like Groq to run the LLMs.
+To access the Huggingface space, you will first have to log in using the username and password given in the keepingllmontrack@outlook.com.txt file in the mail. Running the app through the Huggingface interface is very straightforward and identical to the local run. Nonetheless, it is imporant to know that running it through huggingface does not support local LLM usages and thus requires you to use something like Groq to run the LLMs.
 
 ## Annotation style
 
