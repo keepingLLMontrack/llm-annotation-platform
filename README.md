@@ -39,7 +39,7 @@ The target was to have at least 2 high-quality annotated distractors per domain.
 
 ### 2. Get the code & install
 ```powershell
-git clone -b new-annotation-framework https://huggingface.co/spaces/keepingLLMontrack/llm-annotation-platform
+git clone https://github.com/keepingLLMontrack/llm-annotation-platform
 cd llm-annotation-platform
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1

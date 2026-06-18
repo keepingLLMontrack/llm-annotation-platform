@@ -22,16 +22,17 @@ jobs:
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
 
-          git clone https://user:$HF_TOKEN@huggingface.co/spaces/keepingLLMontrack/llm-annotation-platform hf-space
+          git clone https://user:$HF_TOKEN@huggingface.co/spaces/keepingLLMontrack/llm-annotation-platform _space_sync
 
-          # --exclude 'hf-space' prevents copying the clone into itself (which
-          # previously caused unbounded hf-space/hf-space/... nesting).
-          # --delete keeps the Space a true mirror so removed files don't linger.
-          rsync -av --delete --exclude '.git' --exclude 'hf-space' --exclude '.venv' ./ hf-space/
+          # Clone into a uniquely-named folder so the exclude only protects the
+          # clone itself (not any real path). With --delete, files on the Space
+          # that are NOT in this repo (e.g. stale hf-space/ nesting) get removed,
+          # keeping the Space a clean mirror of the repo.
+          rsync -av --delete --exclude '.git' --exclude '_space_sync' --exclude '.venv' ./ _space_sync/
 
-          cd hf-space
+          cd _space_sync
 
-          git add .
+          git add -A
 
           git commit -m "Sync from GitHub" || echo "No changes to commit"
 
