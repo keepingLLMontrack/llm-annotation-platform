@@ -59,7 +59,8 @@ def render_sidebar(page_title: str = "") -> str:
         st.markdown("[Base Dataset](https://huggingface.co/datasets/nvidia/CantTalkAboutThis-Topic-Control-Dataset)")
         st.markdown("[EMNLP Paper](https://aclanthology.org/2024.findings-emnlp.713)")
         st.markdown("[arXiv:2511.05018](https://arxiv.org/abs/2511.05018)")
-
+        st.markdown("[Annotation Dataset](https://huggingface.co/datasets/keepingLLMontrack/distractor-annotations)")
+        
     return st.session_state.get("annotator_name", "")
 
 
