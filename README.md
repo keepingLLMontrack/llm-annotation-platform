@@ -46,8 +46,8 @@ py -m venv .venv
 py -m pip install -r requirements.txt
 ```
 
-### 3. Configure secrets (shared annotation storage)
-Create `.streamlit/secrets.toml` (gitignored — never commit it):
+### 3. Configure secrets (shared annotation storage and review possibility)
+Create `.streamlit/secrets.toml` (gitignored — never commit it) using the information provided in keepingllmontrack@outlook.com.txt file in the mail:
 ```toml
 HF_TOKEN = "hf_xxx"                                   # write access to the dataset repo below
 ANNOTATIONS_REPO_ID = "keepingLLMontrack/distractor-annotations"
