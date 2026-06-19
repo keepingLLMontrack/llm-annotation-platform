@@ -186,3 +186,12 @@
 - Interpretation: Disagreements were less about what the model said and more about thresholding how much leaked content constitutes failure.
 
 ## 6. Conclusion # TO-DO Andy, Mathijs, Hartog
+This project evaluates how well large language models maintain their assigned personas and follow strict instructions during distracting conversations. By analyzing human-annotated interactions, we identified the specific tactics and topics that cause models to break their safety rules.
+
+The results show that models successfully block direct commands to ignore their instructions. However, they remain vulnerable to subtle conversational pressure. Instead of failing immediately, models often experience progressive drift. They initially comply with safety guidelines but gradually reveal restricted information as the user continues to push.
+
+This vulnerability depends heavily on the conversation topic. Process-oriented subjects like taxes and banking are highly susceptible to derailment. In contrast, legal and real estate scenarios demonstrate much stronger resistance. The most effective attacks rely on natural dialogue rather than technical exploits. Users successfully bypass restrictions by asking hypothetical questions or discussing topics closely related to the model's assigned role.
+
+When models finally yield to these tactics, they often produce contradictory responses. They will generate standard refusal messages while simultaneously providing the forbidden advice. This behavior highlights a critical flaw in current safety mechanisms and complicates human evaluation. To improve future models, developers must clearly define the boundaries between safe general education and restricted actionable advice.
+
+## TO-DO: Interrater & model comparision conclusion 
