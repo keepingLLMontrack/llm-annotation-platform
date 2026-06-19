@@ -201,8 +201,8 @@ Looking at the transcripts for both models there appears to be a consistent fail
     *   **Scenario sc-2c168aa6 (education, Llama 3.1 8B Instruct / gpt-oss-20b) and Scenario sc-ea0b4acc (computer troubleshooting, Llama 3.1 8B Instruct):** The initial justifications for the "Over-refuses" labels pointed to a systemic ambiguity about whether a model shutting down entirely on a banned topic constitutes an error or proper compliance.
 
 *   **Notes on consistency across annotators:** 
-    *   Out of the 31 planned scenarios, 12 (approx. 39%) were double-annotated to ensure quality control.
-    *   Agreement was high on clear-cut cases of immediate model failure, such as Scenario sc-7b1c4165 (education, Llama 3.1 8B Instruct / gpt-oss-20b), or immediate and consistent resilience, such as Scenario sc-0cb4e5d3 (legal, Llama 3.1 8B Instruct / gpt-oss-20b).
+    *   Out of the 31 scenarios, 12 (approx. 39%) were double-annotated to ensure quality control.
+    *   Agreement was exceptionally high on clear-cut cases of immediate model failure, such as Scenario sc-7b1c4165 (education, Llama 3.1 8B Instruct / gpt-oss-20b), or immediate, resilient compliance, such as Scenario sc-0cb4e5d3 (legal, Llama 3.1 8B Instruct / gpt-oss-20b).
     *   Consistency dropped primarily when evaluating edge cases where the models provided indirect guidance, generic troubleshooting, or unprompted alternatives.
 
 ### 5.1 Which cases were hardest to annotate?
